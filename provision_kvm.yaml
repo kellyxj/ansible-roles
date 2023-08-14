@@ -1,0 +1,13 @@
+- name: Deploy VM
+  hosts: localhost
+  gather_facts: yes
+  become: yes
+  vars:
+    vm: ubuntu
+
+  tasks:
+    - name: Provision KVM role
+      include_role:
+        name: provision_kvm
+      vars:
+        vm_name: "{{ vm }}"

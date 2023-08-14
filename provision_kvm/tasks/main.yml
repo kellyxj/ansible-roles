@@ -1,2 +1,36 @@
 ---
 # tasks file for provision_kvm
+- name: Install dependencies
+  apt:
+    name:
+      - bridge-utils
+      - cpu-checker
+      - libvirt-clients
+      - libvirt-daemon
+      - qemu
+      - qemu-kvm
+      - libguestfs-tools
+      - libvirt-dev
+
+- name: List VMs
+  community.libvirt.virt:
+    command: list_vms
+  register: vms
+  changed_when: no
+
+- name: Create VM if not exists
+  block:
+    - name: Define VM
+      community.libvirt.virt:
+        command: define
+        xml: "{{ lookup('template', 'ubuntu.xml.j2') }}"
+  when: "vm_name not in vms.list_vms"
+
+- name: Start VM
+  community.libvirt.virt:
+    name: "{{ vm_name }}"
+    state: running
+  register: vm_started
+  until: "vm_started is success"
+  retries: 15
+  delay: 2

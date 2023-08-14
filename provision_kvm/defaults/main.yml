@@ -1,2 +1,3 @@
 ---
 # defaults file for provision_kvm
+vm_name: ubuntu
