@@ -1,0 +1,5 @@
+---
+# defaults file for teardown_kvm
+vm_name: ubuntu
+libvirt_pool_dir: "/var/lib/libvirt/images" 
+delete_cache: false

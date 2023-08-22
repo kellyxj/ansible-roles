@@ -1,0 +1,31 @@
+---
+# tasks file for teardown_kvm
+- name: List VMs
+  community.libvirt.virt:
+    command: list_vms
+  register: vms
+  changed_when: no
+
+- name: Destroy VM if not exists
+  block:
+    - name: Destroy VM
+      community.libvirt.virt:
+        name: "{{ vm_name }}" 
+        state: shutdown
+
+    - name: Undefine VM
+      community.libvirt.virt:
+        name: "{{ vm_name }}"
+        command: undefine
+
+    - name: Delete image
+      ansible.builtin.file:
+        path: "{{ libvirt_pool_dir }}/{{ vm_name }}.qcow2"
+        state: absent
+
+    - name: Delete cache
+      ansible.builtin.file:
+        path: "/tmp/{{ base_image_name }}"
+        state: absent
+      when: delete_cache
+  when: "vm_name in vms.list_vms"

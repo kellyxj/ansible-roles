@@ -1,0 +1,13 @@
+- name: Teardown VM
+  hosts: localhost
+  gather_facts: yes
+  become: yes
+  vars:
+    vm: ubuntu
+
+  tasks:
+    - name: Teardown KVM role
+      include_role:
+        name: teardown_kvm
+      vars:
+        vm_name: "{{ vm }}"

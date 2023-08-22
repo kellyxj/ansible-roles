@@ -24,6 +24,7 @@
       get_url:
         url: "{{ base_image_url }}"
         dest: "/tmp/{{ base_image_name }}"
+        checksum: "sha256:4c1543670c8afbfc153320a4e9af3994d58129aa85675ede00b2c3e115ad0838"
     - name: Move to libvirt storage pool
       copy:
         dest: "{{ libvirt_pool_dir }}/{{ vm_name }}.qcow2"
@@ -37,7 +38,7 @@
         virt-customize -a {{ libvirt_pool_dir }}/{{ vm_name }}.qcow2
         --hostname {{ vm_name }}
         --root-password password:{{ vm_root_pass }}
-        --ssh-inject 'root:file:{{ ssh_key}}'
+        --ssh-inject 'root:file:{{ ssh_key }}'
         --uninstall cloud-init
       when: copy_image is changed
     - name: Define VM
