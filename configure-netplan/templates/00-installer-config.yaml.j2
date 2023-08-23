@@ -1,0 +1,15 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    {{ ethernet_interface }}:
+      dhcp4: false
+      dhcp6: false
+
+  bridges:
+    br0:
+      interfaces: [{{ ethernet_interface }}]
+      addresses: [{{ ip_address }}]
+      routes:
+        - to: default
+          via: 192.168.0.1

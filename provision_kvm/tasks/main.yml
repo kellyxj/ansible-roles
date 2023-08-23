@@ -11,7 +11,7 @@
       - qemu-kvm
       - libguestfs-tools
       - libvirt-dev
-
+      - openvswitch-switch-dpdk
 - name: List VMs
   community.libvirt.virt:
     command: list_vms
@@ -22,7 +22,7 @@
   block:
     - name: Download base image
       get_url:
-        url: "{{ base_image_url }}"
+      url: "{{ base_image_url }}"
         dest: "/tmp/{{ base_image_name }}"
         checksum: "sha256:4c1543670c8afbfc153320a4e9af3994d58129aa85675ede00b2c3e115ad0838"
     - name: Move to libvirt storage pool
@@ -43,6 +43,7 @@
         --touch "/etc/netplan/00-install-config.yaml"
         --write "/etc/netplan/00-install-config.yaml:{{ lookup('template',  '00-install-config.yaml.j2') }}"
         --firstboot-command 'netplan apply'
+        --firstboot-command 'netplan generate'
         --firstboot-install openvswitch-switch-dpdk,ssh
         --firstboot-command 'ssh-keygen -A'
         --firstboot-command 'systemctl start ssh'

@@ -1,0 +1,33 @@
+---
+# tasks file for configure-netplan
+- name: Install dependencies
+  apt:
+    name:
+      - openvswitch-switch-dpdk
+
+- name: List network interfaces
+  debug:
+    var: ansible_facts.interfaces
+
+- name: Delete old netplan file
+  ansible.builtin.file:
+    path: "{{ netplan_path }}"
+    state: absent
+
+- name: Move netplan to default directory
+  ansible.builtin.file:
+    path: "{{ netplan_path }}"
+    state: touch
+
+- name: Write to netplan file
+  ansible.builtin.blockinfile:
+    path: "{{ netplan_path }}"
+    block: "{{ lookup('template', '00-installer-config.yaml.j2') }}"
+
+- name: Generate netplan
+  ansible.builtin.command:
+    cmd: netplan generate
+
+- name: Apply netplan
+  ansible.builtin.command:
+    cmd: netplan apply

@@ -1,0 +1,9 @@
+- name: Configure bridged networking using netplan
+  hosts: localhost
+  gather_facts: yes
+  become: yes
+   
+  tasks:
+    - name: Write and apply netplan file
+      include_role: 
+        name: configure-netplan
