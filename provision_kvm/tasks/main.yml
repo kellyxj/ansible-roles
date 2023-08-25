@@ -22,7 +22,7 @@
   block:
     - name: Download base image
       get_url:
-      url: "{{ base_image_url }}"
+        url: "{{ base_image_url }}"
         dest: "/tmp/{{ base_image_name }}"
         checksum: "sha256:4c1543670c8afbfc153320a4e9af3994d58129aa85675ede00b2c3e115ad0838"
     - name: Move to libvirt storage pool
@@ -52,6 +52,10 @@
       community.libvirt.virt:
         command: define
         xml: "{{ lookup('template', 'ubuntu.xml.j2') }}"
+    - name: Set autostart for a VM
+      community.libvirt.virt:
+        name: "{{ vm_name }}"
+        autostart: yes
   when: "vm_name not in vms.list_vms"
 
 - name: Start VM

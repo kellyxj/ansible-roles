@@ -1,0 +1,9 @@
+- name: Install docker
+  hosts: vm01
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: Setup docker
+      include_role:
+        name: setup-docker 
