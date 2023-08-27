@@ -33,6 +33,8 @@
         remote_src: yes
         mode: 0660
       register: copy_image
+    - name: Resize disk
+      command: "sudo qemu-img resize {{ libvirt_pool_dir }}/{{ vm_name }}.qcow2 +35G"
     - name: Configure image
       command: >
         virt-customize -a {{ libvirt_pool_dir }}/{{ vm_name }}.qcow2
@@ -47,6 +49,8 @@
         --firstboot-install openvswitch-switch-dpdk,ssh
         --firstboot-command 'ssh-keygen -A'
         --firstboot-command 'systemctl start ssh'
+        --firstboot-command 'growpart /dev/vda 1'
+        --firstboot-command 'resize2fs /dev/vda1'
       when: copy_image is changed
     - name: Define VM
       community.libvirt.virt:
@@ -56,6 +60,8 @@
       community.libvirt.virt:
         name: "{{ vm_name }}"
         autostart: yes
+#    - name: Extend disc size
+#      command: virt-resize --expand /dev/sda1 {{libvirt_pool_dir}}/tmp.qcow2 {{ libvirt_pool_dir }}/{{ vm_name }}.qcow2
   when: "vm_name not in vms.list_vms"
 
 - name: Start VM
